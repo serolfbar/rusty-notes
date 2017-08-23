@@ -4,47 +4,59 @@ extern crate serde_json;
 use std::fs::OpenOptions;
 use std::io::Write;
 use note::Note;
+use std::fs::File;
+use std::io::Error;
+use std::str;
+use std::io::Read;
 
-pub fn add_note(note: Note) {
-    let file_result = OpenOptions::new()
+const FILE_NAME: &str = "rustynotes.txt";
+
+fn get_note_file() -> Result<File, Error> {
+    OpenOptions::new()
         .create(true)
         .read(true)
         .append(true)
-        .open("rustynotes.txt");
+        .open(FILE_NAME)
+}
+
+pub fn add_note(note: Note) {
+    let file_result = get_note_file();
 
     match file_result {
         Ok(mut f) => {
-            let json_note = serde_json::to_string(&note).unwrap();
+            let mut json_note = serde_json::to_string(&note).unwrap();
+            json_note.push('\n');
             f.write_all(json_note.as_bytes());
         }
-        Err(e) => {
-            println!("{}", e);
-            return;
-        }
+        Err(e) => panic!("{:?}", e),
     };
 }
 
-/*
- * If the two parameters are available, the id and and note
- * must match for it to work.
- */
 pub fn remove_note(note: Option<String>, id: Option<String>) {
 
-    if note.is_some() && id.is_some() {
-        //MUST POINT TO THE SAME THING
-    }
-    //    else {
-    //        match note {
-    //            Some(n) => ,
-    //            None => ,
-    //        };
-    //        match id {
-    //            Some(i) => ,
-    //            None => ,
-    //        }
-    //    }
+    if note.is_some() && id.is_some() {}
 }
 
-pub fn list_notes() {}
+pub fn list_notes() {
+    let file_result = get_note_file();
 
-pub fn help() {}
+    let file_content = match file_result {
+        Ok(mut file) => {
+            let mut buffer = String::new();
+
+            file.read_to_string(&mut buffer);
+            println!("{:?}", buffer);
+        }
+        Err(err) => panic!("{}", err), 
+    };
+}
+
+pub fn help() {
+    println!("");
+    println!("Usage : rusty-notes <command> [<args>]");
+    println!("");
+    println!("  add \"note\"   : Adds a new note which is between quotes.");
+    println!("  list         : Prints all saved notes.");
+    println!("  remove <id>  : Removes the note assigned to id.");
+    println!("  help         : Prints help.");
+}

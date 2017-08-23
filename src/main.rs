@@ -11,23 +11,28 @@ const REMOVE_COMMAND: &str = "remove";
 const LIST_COMMAND: &str = "list";
 const HELP_COMMAND: &str = "help";
 
-
-/*
- * Arguments should be like following: <command> <param>
- * Exemple : rusty-notes add "Hello World"
- */
 fn parse_arguments(mut args: Vec<String>) {
     let args_clone = args.clone();
-    let command = args.remove(0);
+    let command = &args.remove(0)[..];
 
-    if first_command_is_valid(command.trim()) {
-        //Maybe better way to fetch command and parameter of command
-        let param = args.remove(0);
+    let argument = if args.len() >= 1 {
+        Some(args.remove(0))
+    } else {
+        None
+    };
 
-        match command.trim() {
+    if first_command_is_valid(command) {
+
+        match command {
             ADD_COMMAND => {
-                let note = Note::new(0, param);
-                commands::add_note(note);
+                match argument {
+                    Some(note_content) => {
+                        let note = Note::new(0, note_content);
+                        commands::add_note(note);
+                        println!("You have added a new note.");
+                    }
+                    None => println!("Please enter a note."),
+                };
             }
             REMOVE_COMMAND => commands::remove_note(None, None),
             LIST_COMMAND => commands::list_notes(),
@@ -55,5 +60,8 @@ fn first_command_is_valid(command: &str) -> bool {
 fn main() {
     let mut args: Vec<String> = std::env::args().collect();
 
-    parse_arguments(args[1..].to_vec());
+    if args.len() > 1 {
+        args.remove(0);
+    }
+    parse_arguments(args.to_vec());
 }
