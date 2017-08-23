@@ -43,9 +43,15 @@ pub fn list_notes() {
     let file_content = match file_result {
         Ok(mut file) => {
             let mut buffer = String::new();
-
             file.read_to_string(&mut buffer);
-            println!("{:?}", buffer);
+
+            let lines = buffer.lines();
+
+            for line in lines {
+                let note: Note = serde_json::from_str(note).unwrap();
+                note.print_note();
+            }
+
         }
         Err(err) => panic!("{}", err), 
     };
