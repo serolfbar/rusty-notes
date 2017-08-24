@@ -27,8 +27,7 @@ fn parse_arguments(mut args: Vec<String>) {
             ADD_COMMAND => {
                 match argument {
                     Some(note_content) => {
-                        let note = Note::new(0, note_content);
-                        commands::add_note(note);
+                        commands::add_note(note_content);
                         println!("You have added a new note.");
                     }
                     None => println!("Please enter a note."),

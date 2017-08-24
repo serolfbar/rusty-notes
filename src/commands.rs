@@ -4,6 +4,7 @@ extern crate serde_json;
 use std::fs::OpenOptions;
 use std::io::Write;
 use note::Note;
+use note;
 use std::fs::File;
 use std::io::Error;
 use std::str;
@@ -19,8 +20,37 @@ fn get_note_file() -> Result<File, Error> {
         .open(FILE_NAME)
 }
 
-pub fn add_note(note: Note) {
+
+//TODO Find better way to find last_id (Database maybe?)
+fn get_last_id() -> u32 {
+    let last_id: u32;
     let file_result = get_note_file();
+
+    match file_result {
+        Ok(mut file) => {
+            let mut buffer = String::new();
+            file.read_to_string(&mut buffer);
+            let last_line = buffer.lines().last();
+            match last_line {
+                Some(line) => {
+                    let note: Note = serde_json::from_str(line).unwrap();
+                    last_id = note.get_id();
+                }  
+                None => last_id = 0,
+            }
+
+        } 
+        Err(e) => panic!("{:?}", e), 
+    }
+
+    last_id
+}
+
+pub fn add_note(note_content: String) {
+
+    let file_result = get_note_file();
+    let last_id = get_last_id();
+    let note = Note::new(last_id, note_content);
 
     match file_result {
         Ok(mut f) => {
@@ -48,7 +78,7 @@ pub fn list_notes() {
             let lines = buffer.lines();
 
             for line in lines {
-                let note: Note = serde_json::from_str(note).unwrap();
+                let note: Note = serde_json::from_str(line).unwrap();
                 note.print_note();
             }
 
