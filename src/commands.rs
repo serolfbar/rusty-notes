@@ -1,90 +1,60 @@
 extern crate serde;
 extern crate serde_json;
 
-use std::fs::OpenOptions;
 use std::io::Write;
 use note::Note;
 use note;
 use std::fs::File;
 use std::io::Error;
 use std::str;
+use std::string::String;
 use std::io::Read;
+use file_operations;
 
-const FILE_NAME: &str = "rustynotes.txt";
 
-fn get_note_file() -> Result<File, Error> {
-    OpenOptions::new()
-        .create(true)
-        .read(true)
-        .append(true)
-        .open(FILE_NAME)
+pub fn add_note(file: &mut File, note_content: String, id: usize) {
+    let note = Note::new(id, note_content);
+    let mut json_note = serde_json::to_string(&note).unwrap();
+    json_note.push('\n');
+
+    file.write_all(json_note.as_bytes());
 }
 
+pub fn remove_note(file: &mut File, id_input: String) {
+    let mut contents: Vec<String> = Vec::new();
+    let mut buffer = String::new();
+    let mut id = 1;
+    file.read_to_string(&mut buffer);
 
-//TODO Find better way to find last_id (Database maybe?)
-fn get_last_id() -> u32 {
-    let last_id: u32;
-    let file_result = get_note_file();
+    let lines = buffer.lines();
 
-    match file_result {
-        Ok(mut file) => {
-            let mut buffer = String::new();
-            file.read_to_string(&mut buffer);
-            let last_line = buffer.lines().last();
-            match last_line {
-                Some(line) => {
-                    let note: Note = serde_json::from_str(line).unwrap();
-                    last_id = note.get_id();
-                }  
-                None => last_id = 0,
-            }
+    for line in lines {
+        let mut note: Note = serde_json::from_str(line).unwrap();
+        let id_as_number: usize = id_input.parse().unwrap();
 
-        } 
-        Err(e) => panic!("{:?}", e), 
+        if id_as_number != note.get_id() {
+            contents.push(note.get_content());
+        }
     }
+    file_operations::erase_file_content();
 
-    last_id
+    for content in contents {
+        add_note(file, content, id);
+        id += 1;
+    }
 }
 
-pub fn add_note(note_content: String) {
+pub fn list_notes(file: &mut File) {
 
-    let file_result = get_note_file();
-    let last_id = get_last_id();
-    let note = Note::new(last_id, note_content);
+    let mut buffer = String::new();
+    file.read_to_string(&mut buffer);
 
-    match file_result {
-        Ok(mut f) => {
-            let mut json_note = serde_json::to_string(&note).unwrap();
-            json_note.push('\n');
-            f.write_all(json_note.as_bytes());
-        }
-        Err(e) => panic!("{:?}", e),
-    };
-}
+    let lines = buffer.lines();
 
-pub fn remove_note(note: Option<String>, id: Option<String>) {
-
-    if note.is_some() && id.is_some() {}
-}
-
-pub fn list_notes() {
-    let file_result = get_note_file();
-
-    let file_content = match file_result {
-        Ok(mut file) => {
-            let mut buffer = String::new();
-            file.read_to_string(&mut buffer);
-
-            let lines = buffer.lines();
-
-            for line in lines {
-                let note: Note = serde_json::from_str(line).unwrap();
-                note.print_note();
-            }
-
-        }
-        Err(err) => panic!("{}", err), 
-    };
+    for line in lines {
+        let note: Note = serde_json::from_str(line).unwrap();
+        note.print();
+    }
 }
 
 pub fn help() {
