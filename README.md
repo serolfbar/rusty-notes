@@ -1,5 +1,6 @@
 ## Rusty-Notes 
-Little program to create little notes inside the terminal.
+CLI tool to create notes.
+
 ## Why 
 I made rusty-notes as both a tool I needed and to learn the basics of rust.
 
