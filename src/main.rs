@@ -11,6 +11,7 @@ use std::fs::File;
 use std::io::Error;
 use std::io::Write;
 use std::io::Read;
+use std::env;
 
 const ADD_COMMAND: &str = "add";
 const REMOVE_COMMAND: &str = "remove";
@@ -88,10 +89,9 @@ fn command_is_valid(command: &str) -> bool {
 fn main() {
     let mut args: Vec<String> = std::env::args().collect();
 
-    //TODO better way of doing this?
-    //This will remove the first argument which is the environment.
     if args.len() > 1 {
         args.remove(0);
     }
+
     parse_arguments(args.to_vec());
 }
