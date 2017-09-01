@@ -5,10 +5,12 @@ CLI tool to create notes.
 I made rusty-notes as both a tool I needed and to learn the basics of rust.
 
 ## Install
+'print()'
 ## Use
 ## TODO's
 -   Add tests.
 -   Refactor code.
--   Change the notes file location, maybe put it in google docs/ dropbox.
 -   Add dates to the notes.
-
+# Maybe later
+-   Synchronize the notes with Dropbox or something similar.
+- 
