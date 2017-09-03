@@ -121,12 +121,4 @@ mod tests {
         add_note(&mut file, String::from(""), 1);
         dir.close();
     }
-
-    #[test]
-    fn added_note_should_be_in_file() {
-        let (dir, mut file) = create_temp_dir_and_file();
-        let number_notes = number_of_notes(&mut file);
-        assert_eq!(1, number_notes);
-        dir.close();
-    }
 }
