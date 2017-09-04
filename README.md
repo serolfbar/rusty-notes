@@ -1,17 +1,18 @@
-## Rusty-Notes 
+# Rusty-Notes 
 CLI tool to create notes.
 
 ## Why 
 I made rusty-notes as both a tool I needed and to learn the basics of rust.
 
-## Install
-'println'
+## Installing
+Install <a href="https://www.rust-lang.org/en-US/install.html">Rust and Cargo</a> \
+Then in the terminal type `cargo install`
 ## Use
-## TODO's
+## Todo's
 -   Add tests.
 -   Refactor code.
 -   Make better error messages.
 -   Add dates to the notes.
-# Maybe later
+## Maybe later
 -   Synchronize the notes with Dropbox or something similar.
 - 
