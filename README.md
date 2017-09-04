@@ -6,7 +6,8 @@ I made rusty-notes as both a tool I needed and to learn the basics of rust.
 
 ## Installing
 Install <a href="https://www.rust-lang.org/en-US/install.html">Rust and Cargo</a> \
-Then in the terminal type `cargo install`
+Download the source. `git clone https://github.com/serolfbar/rusty-notes.git`\
+Go into the rusty-notes directory and `cargo install`
 ## Use
 The use of rusty-notes is pretty simple.\
 <pre><code>Usage : rusty-notes [command] [args]
